@@ -1,6 +1,7 @@
 import "./style.css";
 import { Image } from "./background.js";
 import { Cannon } from "./pictures/cannon";
+import { InputHandler } from "./input.js";
 
 window.addEventListener("load", function () {
   const canvas = document.getElementById("canvas");
@@ -21,7 +22,14 @@ window.addEventListener("load", function () {
         new Image(ctx, 1, document.getElementById("layer5")),
       ];
 
-      this.player = new Cannon(document.getElementById("cannon"), ctx, canvas.width, canvas.height);
+      this.player = new Cannon(
+        document.getElementById("cannon"),
+        ctx,
+        canvas.width,
+        canvas.height
+      );
+
+      this.input = new InputHandler(this);
     }
 
     update(deltaTime) {
@@ -30,6 +38,7 @@ window.addEventListener("load", function () {
         background.draw();
       });
       this.player.draw();
+      this.player.update(this.input.keys);
     }
   }
 
