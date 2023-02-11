@@ -12,6 +12,7 @@ export class InputHandler {
         (e.key === "ArrowRight" && this.keys.indexOf(e.key) === -1)
       ) {
         this.keys.push(e.key);
+        this.lastKey = e.key;
       }
     });
     window.addEventListener("keyup", (e) => {
@@ -24,7 +25,6 @@ export class InputHandler {
       ) {
         this.keys.splice(this.keys.indexOf(e.key), 1);
       }
-
     });
   }
 }

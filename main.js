@@ -2,6 +2,7 @@ import "./style.css";
 import { Image } from "./background.js";
 import { Cannon } from "./pictures/cannon";
 import { InputHandler } from "./input.js";
+import { Circle } from "./circle";
 
 window.addEventListener("load", function () {
   const canvas = document.getElementById("canvas");
@@ -28,8 +29,18 @@ window.addEventListener("load", function () {
         canvas.width,
         canvas.height
       );
-
       this.input = new InputHandler(this);
+      this.circles = [
+        new Circle(
+          this,
+          ctx,
+          canvas.width,
+          canvas.height,
+          this.input,
+          canvas.width / 2,
+          canvas.height - 20 - 100
+        ),
+      ];
     }
 
     update(deltaTime) {
@@ -39,6 +50,10 @@ window.addEventListener("load", function () {
       });
       this.player.draw();
       this.player.update(this.input.keys);
+      this.circles.forEach((circle) => {
+        circle.draw();
+        circle.update();
+      });
     }
   }
 
