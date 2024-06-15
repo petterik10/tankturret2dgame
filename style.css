@@ -4,6 +4,10 @@
   padding: 0;
 }
 
+body {
+  background-image: url("./pictures/Sky.png");
+}
+
 canvas {
   border: 5px solid black;
   position: absolute;
@@ -14,30 +18,29 @@ canvas {
   max-height: 100%;
 }
 
-#player {
-  display: none;
-}
-
 #layer1,
 #layer2,
 #layer3,
 #layer4,
 #layer5,
-#enemy_fly,
-#enemy_plant,
-#enemy_spider_big,
+#tank,
+#tankbody,
+#tanktrack,
+#tankturret,
 #fire,
-#collisionAnimation {
+#fire1,
+#fire2,
+#fire3,
+#fire4,
+#fire5,
+#fire6,
+#fire7,
+#fire8,
+#fire9,
+#fire10,
+#fire11,
+#fire12 {
   display: none;
   position: relative;
   z-index: 1;
-}
-
-
-#cannon {
-  display: none;
-  position: relative;
-  z-index: 3;
-  border: 1px solid black;
- 
 }

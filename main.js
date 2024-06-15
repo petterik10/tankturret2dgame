@@ -1,8 +1,9 @@
 import "./style.css";
 import { Image } from "./background.js";
-import { Cannon } from "./pictures/cannon";
 import { InputHandler } from "./input.js";
 import { Circle } from "./circle";
+import { Enemy } from "./enemy";
+import { Tank } from "./tank.js";
 
 window.addEventListener("load", function () {
   const canvas = document.getElementById("canvas");
@@ -11,68 +12,176 @@ window.addEventListener("load", function () {
   canvas.width = 900;
   canvas.height = 500;
 
+  function distance(circle, rect) {
+    const dx =
+      circle.x - Math.max(rect.x, Math.min(circle.x, rect.x + rect.width));
+    const dy =
+      circle.y - Math.max(rect.y, Math.min(circle.y, rect.y + rect.height));
+    return Math.sqrt(dx * dx + dy * dy);
+  }
+
   class Game {
     constructor(width, height) {
       this.width = width;
       this.height = height;
       this.backgrounds = [
-        new Image(ctx, 0.2, document.getElementById("layer1")),
         new Image(ctx, 0.4, document.getElementById("layer2")),
-        new Image(ctx, 0.6, document.getElementById("layer3")),
         new Image(ctx, 0.8, document.getElementById("layer4")),
-        new Image(ctx, 1, document.getElementById("layer5")),
       ];
-
-      this.player = new Cannon(
-        document.getElementById("cannon"),
+      this.speed = 0;
+      this.maxSpeed = 3;
+      this.tankPlayer = new Tank(
+        document.getElementById("tanktrack"),
+        document.getElementById("tankbody"),
+        document.getElementById("tankturret"),
         ctx,
         canvas.width,
-        canvas.height
+        canvas.height,
+        this
       );
-      this.input = new InputHandler(this);
+      const { x, y, angle } = this.tankPlayer.getTurretPosition();
+      this.particles = [];
+      this.enemies = [
+        new Enemy(this, canvas.width, canvas.height, ctx),
+        new Enemy(this, canvas.width, canvas.height, ctx),
+      ];
       this.circles = [
         new Circle(
           this,
           ctx,
           canvas.width,
           canvas.height,
-          this.input,
-          canvas.width / 2,
-          canvas.height - 20 - 100
+          70,
+          canvas.height - 20 - 100 * 2 + 35,
+          angle
         ),
       ];
+      this.input = new InputHandler(
+        this,
+        this.tankPlayer,
+        this.circles,
+        this.tankPlayer
+      );
+
+      this.createNewEnemy = false;
+      this.offscreenEnemiesCount = 0;
+      this.maxOffscreenEnemies = 30;
+      this.gameOver = false;
     }
 
     update(deltaTime) {
+      this.enemies = this.enemies.filter((enemy) => {
+        if (enemy.isOffscreen()) {
+          this.offscreenEnemiesCount++;
+          if (this.offscreenEnemiesCount >= this.maxOffscreenEnemies) {
+            this.gameOver = true;
+          }
+        }
+        return enemy.markedForDeletion !== true;
+      });
+
       this.backgrounds.forEach((background) => {
         background.update();
         background.draw();
       });
-      this.player.draw();
-      this.player.update(this.input.keys);
-      this.circles.forEach((circle) => {
+      this.tankPlayer.draw();
+      this.enemies.forEach((enemy) => {
+        enemy.draw();
+        enemy.update();
+      });
+
+      this.particles.forEach((particle, index) => {
+        particle.draw(ctx);
+        particle.update();
+        if (particle.markedForDeletion) {
+          this.particles.splice(index, 1);
+        }
+      });
+      if (this.circles.length === 0) {
+        const { x, y, angle } = this.tankPlayer.getTurretPosition();
+        this.circles.push(
+          new Circle(this, ctx, canvas.width, canvas.height, x, y, angle)
+        );
+      }
+      this.circles.forEach((circle, i) => {
         circle.draw();
         circle.update();
+        if (circle.markedForDeletion) {
+          this.circles.splice(i, 1);
+        }
+        this.enemies.forEach((enemy) => {
+          let dist = distance(circle, enemy);
+          if (dist <= circle.radius) {
+            enemy.collisionDetected = true;
+            circle.markedForDeletion = true;
+          }
+        });
       });
+    }
+
+    showGameOverMessage() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      ctx.fillStyle = "red";
+      ctx.font = "30px Arial";
+      ctx.textAlign = "center";
+      ctx.fillText("Game Over", canvas.width / 2, canvas.height / 2 - 40);
+      ctx.font = "20px Arial";
+      ctx.fillText(
+        "Too many enemies have passed the defence line",
+        canvas.width / 2 - 20,
+        canvas.height / 2 - 10
+      );
+      ctx.fillText(
+        "Press Enter to restart",
+        canvas.width / 2,
+        canvas.height / 2 + 20
+      );
+    }
+
+    restart() {
+      this.gameOver = false;
+      this.offscreenEnemiesCount = 0;
+      this.enemies = [
+        new Enemy(this, canvas.width, canvas.height, ctx),
+        new Enemy(this, canvas.width, canvas.height, ctx),
+      ]; // Reset enemies
+      this.createNewEnemy = false;
+      this.maxOffscreenEnemies = 30;
+
+      const { angle } = this.tankPlayer.getInitialPosition();
+      this.circles.splice(0, this.circles.length);
+      this.circles.push(
+        new Circle(
+          this,
+          ctx,
+          canvas.width,
+          canvas.height,
+          70,
+          canvas.height - 20 - 100 * 2 + 35,
+          angle
+        )
+      );
+      this.tankPlayer.resetPosition();
+    }
+
+    start() {
+      const animate = (timeStamp) => {
+        if (this.gameOver) {
+          this.showGameOverMessage();
+          return;
+        }
+        const deltaTime = timeStamp - lastTime;
+        lastTime = timeStamp;
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        this.update(deltaTime);
+        requestAnimationFrame(animate);
+      };
+      let lastTime = 0;
+      animate(0);
     }
   }
 
+
   const game = new Game(canvas.width, canvas.height);
-
-  let lastTime = 0;
-
-  function animate(timeStamp) {
-    /* const deltaTime = timeStamp - lastTime;
-    lastTime = timeStamp; */
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    game.update();
-    /* layer.update();
-    layer.draw(); */
-
-    /* game.draw(ctx);
-    game.update(deltaTime); */
-    requestAnimationFrame(animate);
-  }
-
-  animate(0);
+  game.start();
 });

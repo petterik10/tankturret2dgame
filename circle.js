@@ -1,71 +1,92 @@
 export class Circle {
-  constructor(game, ctx, canvasWidth, canvasHeight, input, x, y) {
+  constructor(game, ctx, canvasWidth, canvasHeight, x, y, angle) {
     this.game = game;
     this.ctx = ctx;
     this.canvasWidth = canvasWidth;
     this.canvasHeight = canvasHeight;
-    this.width = 100;
-    this.height = 100;
+    this.width = 50;
+    this.height = 50;
     this.x = x;
     this.y = y;
     this.radius = 20;
-    this.input = input;
     this.clicked = false;
+    this.markedForDeletion = false;
+
+    this.frames = [];
+    for (let i = 1; i <= 2; i++) {
+      const img = new Image();
+      img.src = `./pictures/tank_bulletFly${i}.png`;
+      this.frames.push(img);
+    }
+
+    this.frameIndex = 0;
+    this.frameCount = 0;
+    this.angle = angle; 
   }
 
   draw() {
-    this.ctx.beginPath();
-    this.ctx.arc(this.x, this.y, this.radius, 0, 2 * Math.PI);
-    this.ctx.fillStyle = "white";
-    this.ctx.stroke();
-    this.ctx.fill();
+    const currentFrame = this.frames[this.frameIndex];
+
+    this.ctx.save();
+
+    this.ctx.translate(this.x, this.y);
+
+    this.ctx.rotate(this.angle);
+
+    this.ctx.drawImage(
+      currentFrame,
+      -this.width / 2,
+      -this.height / 2,
+      this.width,
+      this.height
+    );
+
+    this.ctx.restore();
   }
 
   update() {
-    if (!this.clicked) {
-      if (this.input.keys.includes("ArrowLeft") && this.x > this.width / 2) {
-        this.x -= 5;
-      } else if (
-        this.input.keys.includes("ArrowRight") &&
-        this.x < this.canvasWidth - this.width / 2
-      ) {
-        this.x += 5;
-      } else if (this.input.lastKey === "Enter") {
-        this.input.lastKey = "";
-        this.clicked = true;
-        this.game.circles.push(
-          new Circle(
-            this.game,
-            this.ctx,
-            this.canvasWidth,
-            this.canvasHeight,
-            this.input,
-            this.x,
-            this.canvasHeight - 20 - 100
-          )
-        );
-      }
-    } else {
-      this.y -= 1;
+    if (this.clicked) {
+      this.x += 3.3 * Math.cos(this.angle);
+      this.y += 3.3 * Math.sin(this.angle);
+    }
+
+    if (
+      this.clicked &&
+      (this.y < 0 || this.x < 0 || this.x > this.canvasWidth)
+    ) {
+      this.markedForDeletion = true;
+    }
+
+    this.frameCount++;
+    if (this.frameCount % 10 === 0) {
+      this.frameIndex = (this.frameIndex + 1) % this.frames.length;
+    }
+  }
+
+  releaseCircle(x, y, angle) {
+    this.clicked = true;
+    this.game.circles.push(
+      new Circle(
+        this.game,
+        this.ctx,
+        this.canvasWidth,
+        this.canvasHeight,
+        x,
+        y,
+        angle
+      )
+    );
+  }
+
+  moveCircle(key, tankTurretX, tankTurretY, tankTurretAngle) {
+    if (key === "ArrowRight" && !this.clicked) {
+      if (this.x < this.canvasWidth - this.width / 2) this.x += 5;
+    } else if (key === "ArrowLeft" && !this.clicked) {
+      if (this.x > 0 + this.width / 2) this.x -= 5;
+    } else if ((key === "ArrowUp" || key === "ArrowDown") && !this.clicked) {
+      this.x = tankTurretX;
+      this.y = tankTurretY;
+      this.angle = tankTurretAngle;
     }
   }
 }
-
-/* class Test extends Circle {
-   super()
-
-   constructor(x,  y){
-    this.x = x;
-    this.y = y;
-   }
-
-   draw() {
-    this.ctx.beginPath();
-    this.ctx.arc(this.x, this.y, this.radius, 0, 2 * Math.PI);
-    this.ctx.fillStyle = "white";
-    this.ctx.stroke();
-    this.ctx.fill();
-  }
-
-  
-} */
