@@ -92,7 +92,7 @@ export class Enemy {
       this.frame = 0;
       this.x = this.x;
       this.remove();
-      const newEnemyCount = Math.floor(Math.random() * 2) + 1;
+      const newEnemyCount = Math.floor(Math.random() * 1) + 0.4;
       for (let i = 0; i < newEnemyCount; i++) {
         this.game.enemies.push(this.createReplacement());
       }
