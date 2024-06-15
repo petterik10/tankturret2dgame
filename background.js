@@ -6,7 +6,7 @@ class Layer {
     this.y = 0;
     this.width = 1667;
     this.height = 500;
-    this.gameSpeed = 10;
+    this.gameSpeed = 2;
   }
 }
 
