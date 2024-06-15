@@ -1,4 +1,4 @@
-FROM node as base
+FROM node as final
 
 WORKDIR /usr/src/app
 
