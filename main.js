@@ -122,10 +122,10 @@ window.addEventListener("load", function () {
     showGameOverMessage() {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
       ctx.fillStyle = "red";
-      ctx.font = "30px Arial";
+      ctx.font = "30px Monospace";
       ctx.textAlign = "center";
       ctx.fillText("Game Over", canvas.width / 2, canvas.height / 2 - 40);
-      ctx.font = "20px Arial";
+      ctx.font = "20px Monospace";
       ctx.fillText(
         "Too many enemies have passed the defence line",
         canvas.width / 2 - 20,
