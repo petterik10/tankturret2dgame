@@ -1,9 +1,9 @@
-import "./style.css";
-import { Image } from "./background.js";
-import { InputHandler } from "./input.js";
-import { Circle } from "./circle";
-import { Enemy } from "./enemy";
-import { Tank } from "./tank.js";
+import "./styling/style.css";
+import { Image } from "./logic/animation/background.js";
+import { InputHandler } from "./logic/input/input.js";
+import { Circle } from "./logic/animation/circle.js";
+import { Enemy } from "./logic/enemy/enemy.js";
+import { Tank } from "./logic/tank/tank.js";
 
 window.addEventListener("load", function () {
   const canvas = document.getElementById("canvas");
@@ -132,7 +132,7 @@ window.addEventListener("load", function () {
         canvas.height / 2 - 10
       );
       ctx.fillText(
-        "Press Enter to restart",
+        "Press Space to restart",
         canvas.width / 2,
         canvas.height / 2 + 20
       );
@@ -180,7 +180,6 @@ window.addEventListener("load", function () {
       animate(0);
     }
   }
-
 
   const game = new Game(canvas.width, canvas.height);
   game.start();

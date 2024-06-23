@@ -1,4 +1,4 @@
-import { Fire } from "./particle";
+import { Fire } from "../animation/particle";
 
 export class Enemy {
   constructor(game, canvasWidth, canvasHeight, ctx) {
