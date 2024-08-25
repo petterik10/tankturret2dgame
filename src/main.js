@@ -81,18 +81,19 @@ window.addEventListener("load", function () {
       });
 
       this.backgrounds.forEach((background) => {
-        background.update();
+        background.update(deltaTime);
         background.draw();
       });
+      this.tankPlayer.update();
       this.tankPlayer.draw();
       this.enemies.forEach((enemy) => {
+        enemy.update(deltaTime);
         enemy.draw();
-        enemy.update();
       });
 
       this.particles.forEach((particle, index) => {
+        particle.update(deltaTime);
         particle.draw(ctx);
-        particle.update();
         if (particle.markedForDeletion) {
           this.particles.splice(index, 1);
         }
@@ -104,8 +105,8 @@ window.addEventListener("load", function () {
         );
       }
       this.circles.forEach((circle, i) => {
-        circle.draw();
         circle.update();
+        circle.draw();
         if (circle.markedForDeletion) {
           this.circles.splice(i, 1);
         }

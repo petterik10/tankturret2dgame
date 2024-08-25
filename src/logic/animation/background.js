@@ -1,5 +1,3 @@
-
-
 class Layer {
   constructor() {
     this.x = 0;
@@ -19,11 +17,11 @@ export class Image extends Layer {
     this.speed = this.speedModifier * this.gameSpeed;
   }
 
-  update() {
+  update(deltaTime) {
     if (this.x <= -this.width) {
       this.x = 0;
     } else {
-      this.x = Math.floor(this.x - this.speed);
+      this.x -= this.speed * deltaTime * 0.3;
     }
   }
 

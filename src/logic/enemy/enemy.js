@@ -79,7 +79,7 @@ export class Enemy {
     }
   }
 
-  update() {
+  update(deltaTime) {
     if (this.isOffscreen()) {
       this.remove();
       this.game.enemies.push(this.createReplacement());
@@ -90,7 +90,6 @@ export class Enemy {
       this.markedForDeletion = true;
       this.game.particles.push(new Fire(this.game, this.x, this.y));
       this.frame = 0;
-      this.x = this.x;
       this.remove();
       const newEnemyCount = Math.floor(Math.random() * 1) + 0.4;
       for (let i = 0; i < newEnemyCount; i++) {
@@ -99,8 +98,8 @@ export class Enemy {
       return;
     }
 
-    this.move();
-    this.animate();
+    this.move(deltaTime);
+    this.animate(deltaTime);
   }
 
   isOffscreen() {
@@ -119,17 +118,19 @@ export class Enemy {
     return new Enemy(this.game, this.canvasWidth, this.canvasHeight, this.ctx);
   }
 
-  move() {
-    this.x -= this.speed;
+  move(deltaTime) {
+    this.x -= this.speed * deltaTime * 0.1;
     this.angle += this.frequency;
     if (this.amplitude > 0) {
       this.y = this.canvasHeight / 4 + this.amplitude * Math.sin(this.angle);
     }
   }
 
-  animate() {
-    if (this.gameframe % this.flapSpeed === 0) {
+  animate(deltaTime) {
+    this.gameframe += deltaTime;
+    if (this.gameframe >= this.flapSpeed * 10) {
       this.frame >= this.frameCount - 1 ? (this.frame = 0) : this.frame++;
+      this.gameframe = 0;
     }
   }
 }
