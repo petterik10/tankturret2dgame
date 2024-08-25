@@ -12,6 +12,12 @@ window.addEventListener("load", function () {
   canvas.width = 900;
   canvas.height = 500;
 
+  const instructions = document.getElementById("instructions");
+  instructions.style.display = "block";
+
+  const main = document.getElementById("main");
+  main.style.display = "flex";
+
   function distance(circle, rect) {
     const dx =
       circle.x - Math.max(rect.x, Math.min(circle.x, rect.x + rect.width));
