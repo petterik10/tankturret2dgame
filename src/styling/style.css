@@ -30,9 +30,6 @@ canvas {
 
 #layer1,
 #layer2,
-#layer3,
-#layer4,
-#layer5,
 #tank,
 #tankbody,
 #tanktrack,
@@ -50,7 +47,6 @@ canvas {
 #fire10,
 #fire11,
 #fire12 {
-  display: none;
   position: relative;
   z-index: 1;
 }
