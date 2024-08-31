@@ -21,10 +21,10 @@ export class Tank {
     this.x = 0;
     this.y = this.canvasHeight - this.height * 2;
     this.turretAngle = (-40 * Math.PI) / 180;
-    this.turretLength = 40; 
+    this.turretLength = 40;
     this.game = game;
-    this.initialTurretAngle = (-40 * Math.PI) / 180; 
-    this.direction = "right"; 
+    this.initialTurretAngle = (-40 * Math.PI) / 180;
+    this.direction = "right";
   }
 
   draw() {
@@ -34,7 +34,6 @@ export class Tank {
 
     this.ctx.translate(-this.width / 2, -this.height / 2);
 
-    // Draw the tank track
     this.ctx.drawImage(
       this.trackImage,
       0,
@@ -43,11 +42,11 @@ export class Tank {
       this.trackHeight
     );
 
-    const bodyY = -40; 
+    const bodyY = -40;
     this.ctx.drawImage(this.bodyImage, 0, bodyY, this.width, this.height);
 
-    const turretBaseX = this.width / 2; 
-    const turretBaseY = bodyY + this.height / 2; 
+    const turretBaseX = this.width / 2;
+    const turretBaseY = bodyY + this.height / 2;
 
     this.ctx.save();
 
@@ -72,7 +71,7 @@ export class Tank {
     this.x = 0;
     this.y = this.canvasHeight - this.height * 2;
     this.turretAngle = this.initialTurretAngle;
-    this.direction = "right"; 
+    this.direction = "right";
   }
 
   getInitialTurretAngle() {
@@ -80,9 +79,9 @@ export class Tank {
   }
 
   getTurretPosition() {
-    const bodyY = this.y - 40; 
-    const turretBaseX = this.x + this.width / 2; 
-    const turretBaseY = bodyY + this.height / 2; 
+    const bodyY = this.y - 40;
+    const turretBaseX = this.x + this.width / 2;
+    const turretBaseY = bodyY + this.height / 2;
     const turretEndX =
       turretBaseX + this.turretLength * Math.cos(this.turretAngle);
     const turretEndY =
@@ -92,17 +91,16 @@ export class Tank {
   }
 
   getInitialPosition() {
-    const bodyY = this.y - 40; 
-    const turretBaseX = this.x + this.width / 2; 
-    const turretBaseY = bodyY + this.height / 2; 
+    const bodyY = this.y - 40;
+    const turretBaseX = this.x + this.width / 2;
+    const turretBaseY = bodyY + this.height / 2;
     const turretEndX =
-      turretBaseX + this.turretLength * Math.cos(this.initialTurretAngle); 
+      turretBaseX + this.turretLength * Math.cos(this.initialTurretAngle);
     const turretEndY =
-      turretBaseY + this.turretLength * Math.sin(this.initialTurretAngle); 
+      turretBaseY + this.turretLength * Math.sin(this.initialTurretAngle);
 
-    return { x: turretEndX, y: turretEndY, angle: this.initialTurretAngle }; 
+    return { x: turretEndX, y: turretEndY, angle: this.initialTurretAngle };
   }
-
 
   movePlayer(input) {
     if (input === "ArrowRight") {
@@ -116,12 +114,30 @@ export class Tank {
     }
   }
 
+  canMove(direction) {
+    if (direction === "ArrowLeft") {
+      return this.x > 0;
+    } else if (direction === "ArrowRight") {
+      return this.x < this.game.width - this.width;
+    }
+    return true;
+  }
+
+  move(direction) {
+    const speed = 5; 
+    if (direction === "ArrowLeft" && this.canMove(direction)) {
+      this.x -= speed;
+    } else if (direction === "ArrowRight" && this.canMove(direction)) {
+      this.x += speed;
+    }
+  }
+
   moveTurret(input) {
-    const turretRotationStep = (10 * Math.PI) / 180; 
+    const turretRotationStep = (10 * Math.PI) / 180;
     if (input === "ArrowUp") {
-      this.turretAngle -= turretRotationStep; 
+      this.turretAngle -= turretRotationStep;
     } else if (input === "ArrowDown") {
-      this.turretAngle += turretRotationStep; 
+      this.turretAngle += turretRotationStep;
     }
   }
 

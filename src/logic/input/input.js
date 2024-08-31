@@ -24,18 +24,24 @@ export class InputHandler {
         this.lastKey = e.key;
         this.player.update(this.lastKey);
 
+        const tankCanMove = this.tank.canMove(e.key);
+        if (tankCanMove) {
+          this.tank.move(e.key);
+        }
+
+        const { x: tankX, y: tankY, angle: tankAngle } = this.tank.getTurretPosition();
+
         this.circles.forEach((circle, index) => {
           if (e.key === " " && index === this.circles.length - 1) {
-            const { x, y, angle } = this.tank.getTurretPosition();
-            circle.releaseCircle(x, y, angle);
+            circle.releaseCircle(tankX, tankY, tankAngle);
           } else if (
             e.key === "ArrowLeft" ||
-            (e.key === "ArrowRight" && index === this.circles.length - 1)
+            e.key === "ArrowRight" ||
+            e.key === "ArrowUp" ||
+            e.key === "ArrowDown"
           ) {
-            circle.moveCircle(e.key);
-          } else if (e.key === "ArrowUp" || e.key === "ArrowDown") {
-            const { x, y, angle } = this.tank.getTurretPosition();
-            circle.moveCircle(e.key, x, y, angle);
+            circle.moveCircle(e.key, tankX, tankY, tankAngle, tankCanMove);
+            circle.updateOffset(tankX);
           }
         });
 
