@@ -95,6 +95,7 @@ export class Enemy {
       for (let i = 0; i < newEnemyCount; i++) {
         this.game.enemies.push(this.createReplacement());
       }
+      this.game.updateScore();
       return;
     }
 

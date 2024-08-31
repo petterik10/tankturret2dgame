@@ -3,6 +3,7 @@ export class Circle {
     this.game = game;
     this.ctx = ctx;
     this.canvasWidth = canvasWidth;
+    this.offsetX = 0;
     this.canvasHeight = canvasHeight;
     this.width = 50;
     this.height = 50;
@@ -21,7 +22,7 @@ export class Circle {
 
     this.frameIndex = 0;
     this.frameCount = 0;
-    this.angle = angle; 
+    this.angle = angle;
   }
 
   draw() {
@@ -78,15 +79,22 @@ export class Circle {
     );
   }
 
-  moveCircle(key, tankTurretX, tankTurretY, tankTurretAngle) {
-    if (key === "ArrowRight" && !this.clicked) {
-      if (this.x < this.canvasWidth - this.width / 2) this.x += 5;
-    } else if (key === "ArrowLeft" && !this.clicked) {
-      if (this.x > 0 + this.width / 2) this.x -= 5;
-    } else if ((key === "ArrowUp" || key === "ArrowDown") && !this.clicked) {
-      this.x = tankTurretX;
-      this.y = tankTurretY;
-      this.angle = tankTurretAngle;
+  moveCircle(key, tankTurretX, tankTurretY, tankTurretAngle, tankCanMove) {
+    if (!this.clicked) {
+      if ((key === "ArrowLeft" || key === "ArrowRight") && tankCanMove) {
+        this.x = tankTurretX + this.offsetX;
+      } else if (key === "ArrowUp" || key === "ArrowDown") {
+        this.x = tankTurretX;
+        this.y = tankTurretY;
+        this.angle = tankTurretAngle;
+        this.offsetX = 0; 
+      }
+    }
+  }
+
+  updateOffset(tankX) {
+    if (!this.clicked) {
+      this.offsetX = this.x - tankX;
     }
   }
 }
