@@ -35,6 +35,7 @@ window.addEventListener("load", function () {
         new Image(ctx, 0.8, document.getElementById("layer4")),
       ];
       this.speed = 0;
+      this.score = 0;
       this.maxSpeed = 3;
       this.tankPlayer = new Tank(
         document.getElementById("tanktrack"),
@@ -110,6 +111,8 @@ window.addEventListener("load", function () {
           new Circle(this, ctx, canvas.width, canvas.height, x, y, angle)
         );
       }
+      this.drawScoreboard();
+
       this.circles.forEach((circle, i) => {
         circle.update();
         circle.draw();
@@ -145,6 +148,17 @@ window.addEventListener("load", function () {
       );
     }
 
+    updateScore() {
+      this.score += 1;
+      console.log("score", this.score);
+    }
+
+    drawScoreboard() {
+      ctx.fillStyle = "white";
+      ctx.font = "24px Arial";
+      ctx.fillText(`Score: ${this.score}`, 20, 40);
+    }
+
     restart() {
       this.gameOver = false;
       this.offscreenEnemiesCount = 0;
@@ -169,6 +183,7 @@ window.addEventListener("load", function () {
         )
       );
       this.tankPlayer.resetPosition();
+      this.score = 0;
     }
 
     start() {
