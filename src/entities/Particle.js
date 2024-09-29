@@ -1,6 +1,8 @@
-class Particle {
-  constructor(game) {
-    this.markedForDeletion = false;
+import { Entity } from "./Entity";
+
+class Particle extends Entity {
+  constructor(game, x, y) {
+    super(game, x, y, 0, 0);
     this.lifespan = 15;
   }
 
@@ -13,30 +15,9 @@ class Particle {
   }
 }
 
-export class Dust extends Particle {
-  constructor(game, x, y) {
-    super(game);
-    this.size = Math.random() * 10 + 10;
-    this.x = x;
-    this.y = y;
-    this.speedX = Math.random();
-    this.speedY = Math.random();
-    this.color = "white";
-  }
-
-  draw(context) {
-    context.beginPath();
-    context.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-    context.fillStyle = this.color;
-    context.fill();
-  }
-}
-
-export class Splash extends Particle {}
-
 export class Fire extends Particle {
   constructor(game, x, y) {
-    super(game);
+    super(game, x, y);
     this.images = [];
     for (let i = 1; i <= 27; i++) {
       const img = document.getElementById(`fire${i}`);
@@ -45,12 +26,12 @@ export class Fire extends Particle {
       }
     }
     this.currentImageIndex = 0;
-    this.size = 0.5 * 100 + 100; 
+    this.size = 0.5 * 100 + 100;
     this.x = x;
     this.y = y + -40;
-    this.speedX = 0; 
-    this.speedY = 0.2 * 2 ;
-    this.frameInterval = 2; 
+    this.speedX = 0;
+    this.speedY = 0.2 * 2;
+    this.frameInterval = 2;
     this.frameCount = 0;
   }
 
@@ -64,10 +45,10 @@ export class Fire extends Particle {
     }
   }
 
-  draw(context) {
+  render(ctx) {
     const currentImage = this.images[this.currentImageIndex];
     if (currentImage) {
-      context.drawImage(currentImage, this.x, this.y, this.size, this.size);
+      ctx.drawImage(currentImage, this.x, this.y, this.size, this.size);
     }
   }
 }
